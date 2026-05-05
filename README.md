@@ -1,4 +1,4 @@
-# CSC-3643-Single-Cycle-RISC-V-Processor
+# CSC-3643 Single Cycle RISC-V Processor
 Final project for CSC-364 Computer Architecture. 
 A single-cycle CPU implementing a subset of the RISC-V RV32I instruction set, designed and simulated in Logisim.
 
