@@ -91,7 +91,7 @@ L3: addi x6, x0, 10  # x6 = 10
 
 ## Tools
 
-- **Logisim** (course-provided version)
+- **Logisim Evolution**
 
 ---
 
