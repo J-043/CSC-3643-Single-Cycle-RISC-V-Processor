@@ -24,30 +24,12 @@ This CPU fetches, decodes, executes, and writes back results for every supported
 
 ## Datapath Components
 
-- **PC register** — holds current instruction address, increments by 4
+- **Program Control** — converts opcode to corresponding bits based on instruction type
 - **Instruction Memory** — read-only, word-aligned
 - **Register File** — 32 × 32-bit registers, x0 hardwired to 0, two read ports, one write port
 - **Immediate Generator** — reconstructs and sign-extends immediates for I, S, B, and J formats
 - **ALU** — supports ADD, SUB, AND, OR, XOR, SLT, and equality comparison
 - **Data Memory** — supports word-aligned `lw` and `sw`
-- **PC Adders** — dedicated adders for PC+4 and PC+imm
-- **Multiplexers** — steer ALU operands, write-back data, and next PC
-
----
-
-## Control Signals
-
-| Signal | Purpose |
-|---|---|
-| `RegWrite` | Enables write to destination register `rd` |
-| `ALUSrc` | Selects ALU input B: `0` = rs2, `1` = immediate |
-| `MemRead` | Enables data memory read (`lw`) |
-| `MemWrite` | Enables data memory write (`sw`) |
-| `WBSel` | Write-back source: `0` = ALU result, `1` = memory data, `2` = PC+4 |
-| `Branch` | Indicates a conditional branch |
-| `Jump` | Indicates `jal` |
-| `ALUCtrl` | Encodes ALU operation |
-| `ImmSel` | Selects immediate format for ImmGen (I, S, B, J) |
 
 ---
 
