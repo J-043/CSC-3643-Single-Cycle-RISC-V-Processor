@@ -22,10 +22,6 @@ This CPU fetches, decodes, executes, and writes back results for every supported
 
 ---
 
-Sure! Here's a section you can add to your README:
-
----
-
 ## Datapath Components
 
 ### Program Control
