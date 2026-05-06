@@ -22,14 +22,33 @@ This CPU fetches, decodes, executes, and writes back results for every supported
 
 ---
 
+Sure! Here's a section you can add to your README:
+
+---
+
 ## Datapath Components
 
-- **Program Control** — converts opcode to corresponding bits based on instruction type
-- **Instruction Memory** — read-only, word-aligned
-- **Register File** — 32 × 32-bit registers, x0 hardwired to 0, two read ports, one write port
-- **Immediate Generator** — reconstructs and sign-extends immediates for I, S, B, and J formats
-- **ALU** — supports ADD, SUB, AND, OR, XOR, SLT, and equality comparison
-- **Data Memory** — supports word-aligned `lw` and `sw`
+### Program Control
+Decodes the instruction opcode and converts it into the corresponding control signals based on the instruction type. It drives signals such as `RegWrite`, `ALUSrc`, `MemRead`, `MemWrite`, `WBSel`, `Branch`, `Jump`, `ALUCtrl`, and `ImmSel` to ensure the rest of the datapath behaves correctly for each instruction class.
+
+### Instruction Memory
+A read-only memory block that stores the program instructions. It is word-aligned, meaning each instruction occupies a 4-byte address. On every cycle, it outputs the 32-bit instruction at the current PC address.
+
+### Register File
+Contains 32 general-purpose 32-bit registers. Register `x0` is hardwired to 0 and cannot be overwritten. The register file supports two simultaneous read ports (for `rs1` and `rs2`) and one write port (for `rd`), all accessed within a single cycle.
+
+### Immediate Generator
+Reconstructs the immediate value from the instruction bits and sign-extends it to 32 bits. It handles all four immediate formats used in this design — I, S, B, and J — selecting the correct bit layout based on the `ImmSel` control signal.
+
+### ALU
+The Arithmetic Logic Unit performs all computations in the datapath. It supports ADD, SUB, AND, OR, XOR, and SLT operations, as well as equality comparison for branch resolution (`beq`/`bne`). The operation performed is determined by the `ALUCtrl` signal from the Program Control block.
+
+### Data Memory
+A read/write memory block used by `lw` and `sw` instructions. All accesses are word-aligned. `MemRead` enables a load and routes the result to the write-back mux, while `MemWrite` enables a store from `rs2` into the computed address.
+
+---
+
+Just paste this after your existing **Datapath Components** section and it should flow nicely!
 
 ---
 
