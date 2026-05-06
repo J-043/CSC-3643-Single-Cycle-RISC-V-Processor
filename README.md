@@ -44,10 +44,6 @@ A read/write memory block used by `lw` and `sw` instructions. All accesses are w
 
 ---
 
-Just paste this after your existing **Datapath Components** section and it should flow nicely!
-
----
-
 ## Test Programs
 
 ### Program A — ALU & Immediate Operations
