@@ -24,10 +24,10 @@ This CPU fetches, decodes, executes, and writes back results for every supported
 
 ## Datapath Components
 
-### Program Control
+### Control Unit
 Decodes the instruction opcode and converts it into the corresponding control signals based on the instruction type. It drives signals such as `RegWrite`, `ALUSrc`, `MemRead`, `MemWrite`, `WBSel`, `Branch`, `Jump`, `ALUCtrl`, and `ImmSel` to ensure the rest of the datapath behaves correctly for each instruction class.
 
-### Instruction Memory
+### Instruction Memory 
 A read-only memory block that stores the program instructions. It is word-aligned, meaning each instruction occupies a 4-byte address. On every cycle, it outputs the 32-bit instruction at the current PC address.
 
 ### Register File
@@ -37,9 +37,23 @@ Contains 32 general-purpose 32-bit registers. Register `x0` is hardwired to 0 an
 Reconstructs the immediate value from the instruction bits and sign-extends it to 32 bits. It handles all four immediate formats used in this design — I, S, B, and J — selecting the correct bit layout based on the `ImmSel` control signal.
 
 ### ALU
-The Arithmetic Logic Unit performs all computations in the datapath. It supports ADD, SUB, AND, OR, XOR, and SLT operations, as well as equality comparison for branch resolution (`beq`/`bne`). The operation performed is determined by the `ALUCtrl` signal from the Program Control block.
+The Arithmetic Logic Unit performs all computations in the datapath. It supports ADD, SUB, AND, OR, XOR, and SLT operations, as well as equality comparison for branch resolution (`beq`/`bne`). The operation performed is determined by the `ALUCtrl` signal from the ALU_Control block.
 
-### Data Memory
+### ALU_Control
+The logical unit that reads the ALU_op bits from the Control Unit, the funct7 bit, and the 3 funct3 bits from the Instruction Memory. It directs output to control based on these values, matching up the logic from the ALU. This unit forms instructions for the ALU from the table below: 
+
+| ALU_op | Funct7 | Funct3 | Instruction |
+|---|---|
+| 00 | X | X | `add (lw and sw)` |
+| 01 | X | X | `sub (be)` |
+| 10 | 0 | 000 | `add` |
+| 10 | 1 | 000 | `sub` |
+| 10 | 0 | 111 | `AND` |
+| 10 | 0 | 110 | `OR` |
+| 10 | 0 | 100 | `XOR` |
+| 10 | 0 | 010 | `SLT` |
+
+### Data Memory (ByteAddrMemory and MemoryLogic)
 A read/write memory block used by `lw` and `sw` instructions. All accesses are word-aligned. `MemRead` enables a load and routes the result to the write-back mux, while `MemWrite` enables a store from `rs2` into the computed address.
 
 ---
