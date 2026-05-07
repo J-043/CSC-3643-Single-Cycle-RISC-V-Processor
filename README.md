@@ -43,15 +43,15 @@ The Arithmetic Logic Unit performs all computations in the datapath. It supports
 The logical unit that reads the ALU_op bits from the Control Unit, the funct7 bit, and the 3 funct3 bits from the Instruction Memory. It directs output to control based on these values, matching up the logic from the ALU. This unit forms instructions for the ALU from the table below: 
 
 | ALU_op | Funct7 | Funct3 | Instruction |
-|---|---|
-| 00 | X | X | `add (lw and sw)` |
-| 01 | X | X | `sub (be)` |
-| 10 | 0 | 000 | `add` |
-| 10 | 1 | 000 | `sub` |
-| 10 | 0 | 111 | `AND` |
-| 10 | 0 | 110 | `OR` |
-| 10 | 0 | 100 | `XOR` |
-| 10 | 0 | 010 | `SLT` |
+|--------|--------|--------|-------------|
+| 00     | X      | X      | `add (lw and sw)` |
+| 01     | X      | X      | `sub (beq)` |
+| 10     | 0      | 000    | `add`       |
+| 10     | 1      | 000    | `sub`       |
+| 10     | 0      | 111    | `AND`       |
+| 10     | 0      | 110    | `OR`        |
+| 10     | 0      | 100    | `XOR`       |
+| 10     | 0      | 010    | `SLT`       |
 
 ### Data Memory (ByteAddrMemory and MemoryLogic)
 A read/write memory block used by `lw` and `sw` instructions. All accesses are word-aligned. `MemRead` enables a load and routes the result to the write-back mux, while `MemWrite` enables a store from `rs2` into the computed address.
