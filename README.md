@@ -6,7 +6,7 @@ A single-cycle CPU implementing a subset of the RISC-V RV32I instruction set, de
 
 ## Overview
 
-This CPU fetches, decodes, executes, and writes back results for every supported instruction in a single clock cycle. The design includes a complete datapath, immediate generator, ALU, control unit, and PC update logic.
+This processor fetches, decodes, executes, and writes back results for every supported instruction in a single clock cycle. The design includes a complete datapath, immediate generator, ALU, control unit, and PC update logic.
 
 ---
 
@@ -25,7 +25,7 @@ This CPU fetches, decodes, executes, and writes back results for every supported
 ## Datapath Components
 
 ### Control Unit
-Decodes the instruction opcode and converts it into the corresponding control signals based on the instruction type. It drives signals such as `RegWrite`, `ALUSrc`, `MemRead`, `MemWrite`, `WBSel`, `Branch`, `Jump`, `ALUCtrl`, and `ImmSel` to ensure the rest of the datapath behaves correctly for each instruction class.
+Decodes the instruction opcode and converts it into the corresponding control signals based on the instruction type. It drives signals such as `RegisterWrite`, `ALUSrc`, `Read`, `Write`, `WBSel`, `Branch`, `Jump`, `ALUControl`, and `ImmSel` to ensure the rest of the datapath behaves correctly for each instruction class.
 
 ### Instruction Memory 
 A read-only memory block that stores the program instructions. It is word-aligned, meaning each instruction occupies a 4-byte address. On every cycle, it outputs the 32-bit instruction at the current PC address.
@@ -37,7 +37,7 @@ Contains 32 general-purpose 32-bit registers. Register `x0` is hardwired to 0 an
 Reconstructs the immediate value from the instruction bits and sign-extends it to 32 bits. It handles all four immediate formats used in this design — I, S, B, and J — selecting the correct bit layout based on the `ImmSel` control signal.
 
 ### ALU
-The Arithmetic Logic Unit performs all computations in the datapath. It supports ADD, SUB, AND, OR, XOR, and SLT operations, as well as equality comparison for branch resolution (`beq`/`bne`). The operation performed is determined by the `ALUCtrl` signal from the ALU_Control block.
+The Arithmetic Logic Unit performs all computations in the datapath. It supports ADD, SUB, AND, OR, XOR, and SLT operations, as well as a zero flag output for branch instructions. The operation performed is determined by the `ALUControl` signal from the ALU_Control block.
 
 ### ALU_Control
 The logical unit that reads the ALU_op bits from the Control Unit, the funct7 bit, and the 3 funct3 bits from the Instruction Memory. It directs output to control based on these values, matching up the logic from the ALU. This unit forms instructions for the ALU from the table below: 
@@ -45,7 +45,7 @@ The logical unit that reads the ALU_op bits from the Control Unit, the funct7 bi
 | ALU_op | Funct7 | Funct3 | Instruction |
 |--------|--------|--------|-------------|
 | 00     | X      | X      | `add (lw and sw)` |
-| 01     | X      | X      | `sub (beq)` |
+| 01     | X      | X      | `sub (branch)` |
 | 10     | 0      | 000    | `add`       |
 | 10     | 1      | 000    | `sub`       |
 | 10     | 0      | 111    | `AND`       |
@@ -54,7 +54,7 @@ The logical unit that reads the ALU_op bits from the Control Unit, the funct7 bi
 | 10     | 0      | 010    | `SLT`       |
 
 ### Data Memory (ByteAddrMemory and MemoryLogic)
-A read/write memory block used by `lw` and `sw` instructions. All accesses are word-aligned. `MemRead` enables a load and routes the result to the write-back mux, while `MemWrite` enables a store from `rs2` into the computed address.
+A read/write memory block used by `lw` and `sw` instructions. All accesses are word-aligned. `Read` enables a load and routes the result to the write-back mux, while `Write` enables a store from `rs2` into the computed address.
 
 ---
 
@@ -94,6 +94,8 @@ addi x6, x0, 9     # skipped
 L3: addi x6, x0, 10  # x6 = 10
 ```
 
+Test programs are padded to word align instructions in instruction memory. This is intentional to ensure correct logic for PC incrementation, jumps, and branches.
+
 ---
 
 ## Tools
@@ -109,4 +111,4 @@ L3: addi x6, x0, 10  # x6 = 10
 - Instruction addresses are byte-addressed; PC increments by 4
 - Data memory accesses are word-aligned
 - `jal` takes PC redirect priority over branch logic
-- Branch condition uses the ALU Zero flag or a dedicated comparator
+- Branch condition uses the ALU Zero flag instead of a dedicated comparator
